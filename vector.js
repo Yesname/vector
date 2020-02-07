@@ -15,6 +15,52 @@ class Mat3 {
     }
 }
 
+class Vector3 {
+    constructor(x, y){
+        this.x = x || 0
+        this.y = y || 0
+        this.z = z || 0
+    }
+    add(v){
+        if (v instanceof Vector3){
+            this.x += v.x
+            this.y += v.y
+            this.z += v.z
+        }
+    }
+    sum(v){
+        if (v instanceof Vector3){
+            return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z)
+        }
+    }
+    sub(v){
+        if (v instanceof Vector3){
+            this.x -= v.x
+            this.y -= v.y
+            this.z -= v.z
+        }
+    }
+    vecTo(v){
+        if (v instanceof Vector3){
+            return new Vector3(v.x - this.x, v.y - this.y, v.z - this.z)
+        }
+    }
+    mult(vs){
+        if (typeof vs === 'number'){
+            this.x *= vs
+            this.y *= vs
+            this.z *= vs
+        } else if (vs instanceof Vector3){
+            return this.dot(vs)
+        }
+    }
+    dot(v){
+         if (v instanceof Vector3){
+            return (this.x * v.x + this.y * v.y + this.z * v.z)
+        }
+    }
+}
+
 class Vector {
     constructor(x, y){
         this.x = x || 0;
