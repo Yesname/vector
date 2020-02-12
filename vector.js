@@ -2,21 +2,37 @@
 class Mat3 {
     constructor(a){
 
-        this.mat = (a.length && a.length === 9) ? a : [1,0,0,0,1,0,0,0,1];
+        this.data = (typeof a === `object` && a.length === 9) ? a : [1,0,0,0,1,0,0,0,1];
 
     }
 
     mult(m2){
         if (m2 instanceof Mat3){
-        return new Mat3([this.mat[0] * m2[0] + this.mat[1] * m2[3] + this.mat[2] * m2[6], this.mat[0] * m2[1] + this.mat[1] * m2[4] + this.mat[2] * m2[7], this.mat[0] * m2[2] + this.mat[1] * m2[5] + this.mat[2] * m2[8],
-                this.mat[3] * m2[0] + this.mat[4] * m2[3] + this.mat[5] * m2[6], this.mat[3] * m2[1] + this.mat[4] * m2[4] + this.mat[5] * m2[7], this.mat[3] * m2[2] + this.mat[4] * m2[5] + this.mat[5] * m2[8],
-                this.mat[6] * m2[0] + this.mat[7] * m2[3] + this.mat[8] * m2[6], this.mat[6] * m2[1] + this.mat[7] * m2[4] + this.mat[8] * m2[7], this.mat[6] * m2[2] + this.mat[7] * m2[5] + this.mat[8] * m2[8]])
+        this.data = [this.data[0] * m2.data[0] + this.data[1] * m2.data[3] + this.data[2] * m2.data[6], this.data[0] * m2.data[1] + this.data[1] * m2.data[4] + this.data[2] * m2.data[7], this.data[0] * m2.data[2] + this.data[1] * m2.data[5] + this.data[2] * m2.data[8],
+                this.data[3] * m2.data[0] + this.data[4] * m2.data[3] + this.data[5] * m2.data[6], this.data[3] * m2.data[1] + this.data[4] * m2.data[4] + this.data[5] * m2.data[7], this.data[3] * m2.data[2] + this.data[4] * m2.data[5] + this.data[5] * m2.data[8],
+                this.data[6] * m2.data[0] + this.data[7] * m2.data[3] + this.data[8] * m2.data[6], this.data[6] * m2.data[1] + this.data[7] * m2.data[4] + this.data[8] * m2.data[7], this.data[6] * m2.data[2] + this.data[7] * m2.data[5] + this.data[8] * m2.data[8]]
         }
+    }
+
+    setRotation(x,y,z){
+
+        this.data = [1,0,0,0,1,0,0,0,1]
+
+        if (x!==undefined){
+            this.mult(new Mat3([1,0,0,0,Math.cos(x),-Math.sin(x),0,Math.sin(x),Math.cos(x)]))
+        }
+        if (y!==undefined){
+            this.mult(new Mat3([Math.cos(y),0,Math.sin(y),0,1,0,-Math.sin(y),0,Math.cos(y)]))
+        }
+        if (z!==undefined){
+            this.mult(new Mat3([Math.cos(z),Math.sin(z),0,-Math.sin(z),Math.cos(z),0,0,0,1]))
+        }
+        
     }
 }
 
 class Vector3 {
-    constructor(x, y){
+    constructor(x, y, z){
         this.x = x || 0
         this.y = y || 0
         this.z = z || 0
@@ -45,14 +61,22 @@ class Vector3 {
             return new Vector3(v.x - this.x, v.y - this.y, v.z - this.z)
         }
     }
-    mult(vs){
-        if (typeof vs === 'number'){
-            this.x *= vs
-            this.y *= vs
-            this.z *= vs
-        } else if (vs instanceof Vector3){
-            return this.dot(vs)
+    mult(vsm){
+        if (typeof vsm === 'number'){
+            this.x *= vsm
+            this.y *= vsm
+            this.z *= vsm
+        } else if (vsm instanceof Vector3){
+            return this.dot(vsm)
+        } else if (vsm instanceof Mat3){
+            let x = this.x * vsm.data[0] + this.y * vsm.data[1] + this.z * vsm.data[2]
+            let y = this.x * vsm.data[3] + this.y * vsm.data[4] + this.z * vsm.data[5]
+            let z = this.x * vsm.data[6] + this.y * vsm.data[7] + this.z * vsm.data[8]
+            this.x = x
+            this.y = y
+            this.z = z
         }
+        return this
     }
     dot(v){
          if (v instanceof Vector3){
